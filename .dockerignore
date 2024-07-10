@@ -111,3 +111,7 @@ venv.bak/
 db.sqlite3
 pyvenv.cfg
 Scripts
+.gitignore
+.github
+README.md
+venv
