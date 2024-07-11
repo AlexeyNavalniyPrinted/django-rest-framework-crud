@@ -1,2 +1,3 @@
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "api_crud.settings"
+python_files = ["movies/tests.py, authentication/tests.py"]
