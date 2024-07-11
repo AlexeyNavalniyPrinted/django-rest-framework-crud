@@ -25,6 +25,7 @@ jobs:
       - run: pip install -U pytest-django
       - run: pip install flake8
       - run: pip install -r requirements.txt
+      - run: pip install psycopg2
       - run: pytest .
       - run: flake8 .
   build:
