@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     name: Test code
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v4
@@ -47,32 +47,33 @@ jobs:
           tags: alex23451234/django-api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-#  deploy:
-#    name: Deploy to kubernetes cluster
-#    if: github.ref == 'refs/heads/master'
-#    needs: [ test, build ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Set the Kubernetes context
-#        uses: azure/k8s-set-context@v2
-#        with:
-#          method: service-account
-#          k8s-url: ${{ secrets.K8S_URL }}
-#          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
-#
-#      - name: Checkout source code
-#        uses: actions/checkout@v3
-#
-#      - name: Deploy to the Kubernetes cluster
-#        uses: azure/k8s-deploy@v1
-#        with:
-#          namespace: default
-#          manifests: |
-#            manifest.yaml
-#          images: |
-#            alex23451234/django-api:${{ github.sha }}
+  deploy:
+    name: Deploy to kubernetes cluster
+    if: github.ref == 'refs/heads/master'
+    needs: [ test, build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: ${{ secrets.K8S_URL }}
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          manifests: |
+            manifest.yaml
+          images: |
+            alex23451234/django-api:${{ github.sha }}
   notifications:
     runs-on: ubuntu-latest
+    needs: [deploy]
     steps:
 #      - name: Send notification to Slack
 #        id: slack
@@ -88,5 +89,5 @@ jobs:
           to: ${{ secrets.telegram_chat  }}
           token: ${{ secrets.telegram_token }}
           message: |
-            "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            GitHub build result: ${{ job.status }}${{ github.event.pull_request.html_url || github.event.head_commit.url }}
 
