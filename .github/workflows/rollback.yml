@@ -1,4 +1,4 @@
-name: rollback.yml
+name: rollback
 on:
   workflow_dispatch:
     inputs:
