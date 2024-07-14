@@ -23,12 +23,31 @@ spec:
               drop:
                 - ALL
           image: alex23451234/django-api:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
-            - mountPath: /certs
+            - mountPath: /etc/secrets/certs
               name: certs
-            - mountPath: /etc/redis
-              name: redis
+            - mountPath: /etc/secrets
+              name: password
+      volumes:
+        - name: certs
+          secret:
+            secretName: db-postgresql-crt
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+
+        - name: password
+          secret:
+            secretName: db-postgresql
+            items:
+              - key: postgres-password
+                path: password
+
       restartPolicy: Always
 ---
 

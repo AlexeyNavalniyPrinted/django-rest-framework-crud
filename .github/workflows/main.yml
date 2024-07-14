@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     name: Test code
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +23,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+      - run: python manage.py test
 #      - run: pip install psycopg2
 #      - run: pip install flake8-django
 #      - run: pip install -U pytest-django
@@ -45,7 +46,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: alex23451234/django-api:${{ github.sha }}
+          tags: |
+            alex23451234/django-api:${{ github.sha }}
+            alex23451234/django-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
   deploy:
@@ -55,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v2
+        uses: azure/k8s-set-context@v4
         with:
           method: service-account
           k8s-url: ${{ secrets.K8S_URL }}
@@ -69,21 +72,21 @@ jobs:
         with:
           namespace: default
           manifests: |
-            manifest.yaml
+            devops/manifest.yaml
           images: |
             alex23451234/django-api:${{ github.sha }}
   notifications:
     runs-on: ubuntu-latest
     needs: [deploy]
     steps:
-#      - name: Send notification to Slack
-#        id: slack
-#        uses: slackapi/slack-github-action@v1.26.0
-#        with:
-#          channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
-#          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-#        env:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Send notification to Slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
+          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       - name: Send notification to Telegram
         uses: appleboy/telegram-action@master
         with:
