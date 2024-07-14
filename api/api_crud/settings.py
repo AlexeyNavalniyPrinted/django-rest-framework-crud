@@ -85,13 +85,17 @@ WSGI_APPLICATION = 'api_crud.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+if os.environ.get('env') == 'pipeline':
+    password = ''
+else:
+    password = open('/etc/secrets/password', 'r').read().strip()
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': open('/etc/secrets/password', 'r').read().strip(),
+        'PASSWORD': password,
         'HOST': 'db-postgresql.default.svc.cluster.local',
         'PORT': '5432',
         'OPTIONS': {
