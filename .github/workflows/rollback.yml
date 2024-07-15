@@ -1,5 +1,6 @@
 name: Revert pushed commit
 
+
 on:
   workflow_dispatch:
     inputs:
