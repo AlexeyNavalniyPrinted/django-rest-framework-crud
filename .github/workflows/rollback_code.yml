@@ -27,7 +27,6 @@ jobs:
               
               git commit -m "Revert last commit (excluding .github folder)"
               git push
-
   run_release_workflow:
     runs-on: ubuntu-latest
     needs: revert_commit
