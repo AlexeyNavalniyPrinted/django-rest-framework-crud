@@ -81,13 +81,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "GitHub build result: ${{ job.status }}\nCommit message: $${{ github.event.head_commit.message }}",
+              "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub build result: ${{ job.status }}\nCommit message: $${{ github.event.head_commit.message }}"
+                    "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}"
                   }
                 }
               ]
@@ -124,4 +124,5 @@ jobs:
           to: ${{ secrets.telegram_chat  }}
           token: ${{ secrets.telegram_token }}
           message: |
-            GitHub build result: ${{ job.status }}${{ github.event.pull_request.html_url || github.event.head_commit.url }}
+            GitHub build result: ${{ job.status }}
+            ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
