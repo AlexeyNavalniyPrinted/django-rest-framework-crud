@@ -6,6 +6,10 @@ on:
       - master
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   env: pipeline
 
@@ -100,7 +104,8 @@ jobs:
           to: ${{ secrets.telegram_chat  }}
           token: ${{ secrets.telegram_token }}
           message: |
-            GitHub build result: ${{ job.status }}${{ github.event.pull_request.html_url || github.event.head_commit.url }}
+            GitHub build result: ${{ job.status }}
+            ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
 
   success_notifications:
     runs-on: ubuntu-latest
