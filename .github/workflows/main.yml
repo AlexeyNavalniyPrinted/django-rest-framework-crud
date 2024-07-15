@@ -24,7 +24,7 @@ jobs:
       - run: python api/manage.py test
 
   build:
-    needs: [test]
+    needs: [ test ]
     name: Build and push docker image
     runs-on: ubuntu-latest
     steps:
@@ -70,15 +70,16 @@ jobs:
             devops/kubernetes/manifest.yaml
           images: |
             alex23451234/django-api:${{ github.sha }}
-  notifications:
+  failure_notifications:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    if: failure()
+    needs: [ test, build, deploy ]
     steps:
       - name: Send notification to Slack
         id: slack
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -90,3 +91,23 @@ jobs:
           message: |
             GitHub build result: ${{ job.status }}${{ github.event.pull_request.html_url || github.event.head_commit.url }}
 
+  success_notifications:
+    runs-on: ubuntu-latest
+    if: success()
+    needs: [ test, build, deploy ]
+    steps:
+      - name: Send notification to Slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Send notification to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.telegram_chat  }}
+          token: ${{ secrets.telegram_token }}
+          message: |
+            GitHub build result: ${{ job.status }}${{ github.event.pull_request.html_url || github.event.head_commit.url }}
