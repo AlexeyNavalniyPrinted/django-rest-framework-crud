@@ -1,11 +1,11 @@
-FROM python:3.6-alpine
+FROM python:3.6-slim
 
 EXPOSE 8080
 
 WORKDIR /app
 COPY api/requirements.txt /app
 
-RUN apk update && pip3 install -r requirements.txt --no-cache-dir
+RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY api /app
 
