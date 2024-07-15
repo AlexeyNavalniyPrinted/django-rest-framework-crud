@@ -11,4 +11,5 @@ COPY api /app
 
 ENTRYPOINT ["python3"]
 
+
 CMD ["manage.py", "runserver"]
