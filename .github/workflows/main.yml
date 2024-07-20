@@ -93,13 +93,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}",
+              "text": "GitHub Actions workflow failed ❌",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Actions workflow failed ❌\nCommit message: ${{ github.event.head_commit.message }}"
+                    "text": "GitHub Actions workflow failed ❌"
                   }
                 }
               ]
@@ -126,7 +126,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}",
+              "text": "GitHub Actions workflow completed successfully ✅\nCommit message: ${{ github.event.head_commit.message }}",
               "blocks": [
                 {
                   "type": "section",

@@ -42,7 +42,7 @@ jobs:
           with:
             payload: |
               {
-                "text": "Failed to reverte commit ❌. Please take actions ⚠️",
+                "text": "Failed to reverse commit ❌. Please take actions ⚠️",
                 "blocks": [
                   {
                     "type": "section",
