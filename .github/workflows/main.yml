@@ -85,7 +85,7 @@ jobs:
           to: ${{ secrets.telegram_chat  }}
           token: ${{ secrets.telegram_token }}
           message: |
-            GitHub build result: ${{ job.status }}
+            GitHub Actions workflow failed ❌
             ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
       - name: Send notification to Slack
         id: slack
@@ -99,7 +99,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}"
+                    "text": "GitHub Actions workflow failed ❌\nCommit message: ${{ github.event.head_commit.message }}"
                   }
                 }
               ]
@@ -118,7 +118,7 @@ jobs:
           to: ${{ secrets.telegram_chat  }}
           token: ${{ secrets.telegram_token }}
           message: |
-            GitHub build result: ${{ job.status }}
+            GitHub Actions workflow completed successfully ✅
             ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
       - name: Send notification to Slack
         id: slack
@@ -132,7 +132,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub build result: ${{ job.status }}\nCommit message: ${{ github.event.head_commit.message }}"
+                    "text": "GitHub Actions workflow completed successfully ✅\nCommit message: ${{ github.event.head_commit.message }}"
                   }
                 }
               ]

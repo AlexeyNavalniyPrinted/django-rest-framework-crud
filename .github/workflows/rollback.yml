@@ -12,7 +12,7 @@ jobs:
   revert_commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Revert
         uses: actions/checkout@v4
         with:
            ref: ${{ github.event.inputs.branch }}
@@ -24,3 +24,67 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git revert --no-edit HEAD
           git push
+    failure_notifications:
+      runs-on: ubuntu-latest
+      if: failure()
+      needs: [ Revert ]
+      steps:
+        - name: Send notification to Telegram
+          uses: appleboy/telegram-action@master
+          with:
+            to: ${{ secrets.telegram_chat  }}
+            token: ${{ secrets.telegram_token }}
+            message: |
+              Failed to reverte commit ❌. Please take actions ⚠️
+        - name: Send notification to Slack
+          id: slack
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            payload: |
+              {
+                "text": "Failed to reverte commit ❌. Please take actions ⚠️",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "Failed to reverte commit ❌. Please take actions ⚠️"
+                    }
+                  }
+                ]
+              }
+          env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    success_notifications:
+      runs-on: ubuntu-latest
+      if: success()
+      needs: [ Revert ]
+      steps:
+        - name: Send notification to Telegram
+          uses: appleboy/telegram-action@master
+          with:
+            to: ${{ secrets.telegram_chat  }}
+            token: ${{ secrets.telegram_token }}
+            message: |
+              Successfully reverted commit. Main Github Actions workflow started ✅
+              ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
+        - name: Send notification to Slack
+          id: slack
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            payload: |
+              {
+                "text": "Successfully reverted commit. Main Github Actions workflow started ✅",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "Successfully reverted commit. Main Github Actions workflow started ✅"
+                    }
+                  }
+                ]
+              }
+          env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
