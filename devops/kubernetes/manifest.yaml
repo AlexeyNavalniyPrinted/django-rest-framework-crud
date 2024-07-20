@@ -15,10 +15,12 @@ spec:
       labels:
         app: api
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: api
           securityContext:
-            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -27,8 +29,12 @@ spec:
           volumeMounts:
             - mountPath: /etc/secrets/certs
               name: certs
+              readOnly: true
+              subPath: certs
+
             - mountPath: /etc/secrets
               name: password
+              readOnly: true
       volumes:
         - name: certs
           secret:
@@ -49,6 +55,7 @@ spec:
                 path: password
 
       restartPolicy: Always
+
 ---
 
 apiVersion: v1
@@ -60,6 +67,6 @@ spec:
     app: api
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: LoadBalancer
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
