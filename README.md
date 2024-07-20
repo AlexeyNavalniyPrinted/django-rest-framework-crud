@@ -51,3 +51,7 @@ telegram_chat = $TelegramChatId
 telegram_token = $TelegramBotToken
 
 SLACK_WEBHOOK_URL = $SlackWebhookUrl
+
+Create token here https://github.com/settings/tokens?type=beta
+
+WORKFLOW_TOKEN = $TokenAbove
